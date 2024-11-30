@@ -22,25 +22,32 @@ links = dom.xpath(teg_of_links)
 print(links)
 
 # извлекаю цены
-teg_of_prices = "//span[@class='textual-display bsig__price bsig__price--displayprice']//text()"
+teg_of_prices = "//div[@class='bsig brw-signal bsig--primary']//text()"
 prices = dom.xpath(teg_of_prices)
 pprint(prices)
 ################
 # Работа сразу с большим количеством наименований и перевод данных в словарь
-list_board = '//li[@class="brwrvr__item-card brwrvr__item-card--list"]'
+list_board = './/li[@class="brwrvr__item-card brwrvr__item-card--list"]'
 items = dom.xpath(list_board)
 
-result_dict = {}
+
+result_list = []
 for item in items:
+    result_dict = {}
     teg_of_name = ".//h3[@class='textual-display bsig__title__text']"
     name = item.xpath(teg_of_name + '/text()')
+    print('1: ',name)
 
     teg_of_link = ".//h3[@class='textual-display bsig__title__text']/../@href"
-    link = dom.xpath(teg_of_links)
+    link = item.xpath(teg_of_links)
+    print("2", link)
 
-    teg_of_price = ".//span[@class='textual-display bsig__price bsig__price--displayprice']//text()"
-    price = dom.xpath(teg_of_prices)
+    teg_of_price = ".//div[@class='bsig brw-signal bsig--primary']//text()"
+    price = item.xpath(teg_of_prices)
+    print("3", price)
 
-    result_dict[name[0]] = [price[0], link[0]]
+    result_dict[name[0]] = [price, link]
+    result_list.append(result_dict)
 
-pprint(result_dict)
+# print('Результат')
+# pprint(result_list)
