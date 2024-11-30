@@ -1,0 +1,46 @@
+from lxml import html
+import requests
+from pprint import pprint
+
+# Подготовка данных к скреппингу
+my_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:133.0) Gecko/20100101 Firefox/133.0'
+header = {'user-agent': my_UA}
+url = 'https://ar.ebay.com/b/Fishing-Equipment-Supplies/1492/bn_1851047'
+resource = requests.get(url, headers = header)
+print(resource)
+dom = html.fromstring(resource.text)
+print(dom)
+
+# извлекаю имя товара
+teg_of_name = "//h3[@class='textual-display bsig__title__text']"
+names = dom.xpath(teg_of_name+'/text()')
+print(names)
+
+# извлекаю ссылку на товар
+teg_of_links = "//h3[@class='textual-display bsig__title__text']/../@href"
+links = dom.xpath(teg_of_links)
+print(links)
+
+# извлекаю цены
+teg_of_prices = "//span[@class='textual-display bsig__price bsig__price--displayprice']//text()"
+prices = dom.xpath(teg_of_prices)
+pprint(prices)
+################
+# Работа сразу с большим количеством наименований и перевод данных в словарь
+list_board = '//li[@class="brwrvr__item-card brwrvr__item-card--list"]'
+items = dom.xpath(list_board)
+
+result_dict = {}
+for item in items:
+    teg_of_name = ".//h3[@class='textual-display bsig__title__text']"
+    name = item.xpath(teg_of_name + '/text()')
+
+    teg_of_link = ".//h3[@class='textual-display bsig__title__text']/../@href"
+    link = dom.xpath(teg_of_links)
+
+    teg_of_price = ".//span[@class='textual-display bsig__price bsig__price--displayprice']//text()"
+    price = dom.xpath(teg_of_prices)
+
+    result_dict[name[0]] = [price[0], link[0]]
+
+pprint(result_dict)
